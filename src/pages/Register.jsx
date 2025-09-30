@@ -9,16 +9,20 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const nav = useNavigate();
 
-  const submit = async (e) => {
-    e.preventDefault();
+  const submit = async () => {
     try {
+      console.log("📡 Sending register request:", { username, email, password });
       const resp = await api.post('/auth/register/', { username, email, password });
+
+      console.log("✅ Register response:", resp.data);
+
       localStorage.setItem('access_token', resp.data.access);
       localStorage.setItem('refresh_token', resp.data.refresh);
       localStorage.setItem('user', JSON.stringify(resp.data.user));
+
       nav('/');
     } catch (err) {
-      console.error(err);
+      console.error("❌ Register error:", err.response || err.message);
       alert('Registration failed.');
     }
   };
@@ -27,7 +31,7 @@ export default function Register() {
     <div className="register-container">
       <div className="register-card">
         <h2>Sign up</h2>
-        <form onSubmit={submit} className="register-form">
+        <div className="register-form">
           <div className="form-group">
             <input
               value={username}
@@ -52,8 +56,10 @@ export default function Register() {
               required
             />
           </div>
-          <button type="submit" className="register-btn">Register</button>
-        </form>
+          <button type="button" onClick={submit} className="register-btn">
+            Register
+          </button>
+        </div>
       </div>
     </div>
   );
